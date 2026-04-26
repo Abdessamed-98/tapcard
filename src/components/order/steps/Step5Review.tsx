@@ -186,14 +186,22 @@ export default function Step5Review() {
         title="Articles commandés"
         onEdit={() => store.setStep(4)}
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {store.orderItems.map((item) => (
-            <div key={item.productId} className="flex justify-between text-sm">
-              <span>
-                {item.productName}{" "}
-                <span className="text-gray-400">× {item.quantity}</span>
-              </span>
-              <span className="font-semibold">
+            <div key={item.id} className="flex justify-between items-start text-sm gap-3 pb-2 border-b border-gray-50 last:border-0">
+              <div className="flex flex-col gap-0.5">
+                <span className="font-medium text-gray-900">
+                  {item.productName}{" "}
+                  <span className="text-gray-400 font-normal">× {item.quantity}</span>
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="bg-indigo-50 text-indigo-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    {item.platformLabel}
+                  </span>
+                  <span className="text-gray-400 text-xs truncate max-w-[180px]">{item.profileUrl}</span>
+                </div>
+              </div>
+              <span className="font-semibold shrink-0">
                 {formatPrice(item.unitPrice * item.quantity)}
               </span>
             </div>

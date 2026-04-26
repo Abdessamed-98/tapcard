@@ -3,8 +3,12 @@
 import { create } from "zustand";
 
 export interface OrderItem {
+  id: string;           // unique per line (uuid-lite)
   productId: string;
   productName: string;
+  platform: string;     // e.g. "instagram"
+  platformLabel: string;
+  profileUrl: string;   // the user's link for this card
   quantity: number;
   unitPrice: number;
 }
@@ -76,7 +80,8 @@ interface OrderFormActions {
     data: Pick<OrderFormState, "skipSocialLinks" | "socialLinks">
   ) => void;
   // Step 4
-  setOrderItem: (productId: string, productName: string, price: number, quantity: number) => void;
+  addOrderItem: (item: Omit<OrderItem, "id">) => void;
+  removeOrderItem: (id: string) => void;
   // Step 5
   submitOrder: () => Promise<void>;
   reset: () => void;
@@ -123,26 +128,16 @@ export const useOrderStore = create<OrderFormState & OrderFormActions>(
 
     setSocialLinks: (data) => set(data),
 
-    setOrderItem: (productId, productName, price, quantity) =>
-      set((s) => {
-        const existing = s.orderItems.findIndex((i) => i.productId === productId);
-        if (quantity === 0) {
-          return {
-            orderItems: s.orderItems.filter((i) => i.productId !== productId),
-          };
-        }
-        if (existing >= 0) {
-          const updated = [...s.orderItems];
-          updated[existing] = { ...updated[existing], quantity };
-          return { orderItems: updated };
-        }
-        return {
-          orderItems: [
-            ...s.orderItems,
-            { productId, productName, quantity, unitPrice: price },
-          ],
-        };
-      }),
+    addOrderItem: (item) =>
+      set((s) => ({
+        orderItems: [
+          ...s.orderItems,
+          { ...item, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}` },
+        ],
+      })),
+
+    removeOrderItem: (id) =>
+      set((s) => ({ orderItems: s.orderItems.filter((i) => i.id !== id) })),
 
     submitOrder: async () => {
       set({ isSubmitting: true });

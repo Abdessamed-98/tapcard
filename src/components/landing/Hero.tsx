@@ -38,32 +38,61 @@ function MiniCard() {
 }
 
 function MiniPlaque() {
+  // Simplified QR code drawn as SVG modules
+  const modules = [
+    // top-left finder
+    [0,0],[1,0],[2,0],[3,0],[4,0],[0,1],[4,1],[0,2],[2,2],[4,2],[0,3],[4,3],[0,4],[1,4],[2,4],[3,4],[4,4],
+    // top-right finder
+    [10,0],[11,0],[12,0],[13,0],[14,0],[10,1],[14,1],[10,2],[12,2],[14,2],[10,3],[14,3],[10,4],[11,4],[12,4],[13,4],[14,4],
+    // bottom-left finder
+    [0,10],[1,10],[2,10],[3,10],[4,10],[0,11],[4,11],[0,12],[2,12],[4,12],[0,13],[4,13],[0,14],[1,14],[2,14],[3,14],[4,14],
+    // data modules (random-looking but static)
+    [6,0],[8,0],[6,2],[7,2],[9,2],[6,4],[8,4],[9,4],
+    [0,6],[2,6],[4,6],[6,6],[8,6],[10,6],[12,6],[14,6],
+    [1,7],[3,7],[7,7],[9,7],[11,7],[13,7],
+    [0,8],[4,8],[6,8],[8,8],[10,8],[12,8],[14,8],
+    [2,9],[6,9],[9,9],[11,9],[13,9],
+    [7,10],[9,10],[11,10],[13,10],[14,10],
+    [6,11],[8,11],[10,11],[12,11],
+    [7,12],[9,12],[11,12],[14,12],
+    [6,13],[8,13],[10,13],[12,13],[14,13],
+    [7,14],[9,14],[11,14],[13,14],
+  ];
+
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="relative w-40 h-20 rounded-xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 shadow-xl shadow-slate-900/60 p-3.5 flex flex-col justify-between overflow-hidden border border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent" />
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="absolute inset-x-0 h-px bg-white/5" style={{ top: `${i * 16 + 4}px` }} />
-        ))}
-        <div className="relative z-10 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-1 mb-0.5">
-              <div className="w-3 h-3 bg-indigo-500 rounded flex items-center justify-center">
-                <Zap size={6} className="text-white" fill="white" />
-              </div>
-              <span className="text-white/80 font-bold text-[8px]">TapCard</span>
-            </div>
-            <div className="text-white/30 text-[7px]">Scannez pour contacter</div>
+    <div className="flex flex-col items-center gap-0.5">
+      {/* The plaque card */}
+      <div className="relative w-[100px] h-[100px] rounded-2xl bg-gray-950 shadow-2xl shadow-black/70 flex flex-col items-center justify-between py-2.5 px-2 overflow-hidden border border-white/10">
+        {/* Subtle sheen */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent pointer-events-none rounded-2xl" />
+
+        {/* Top: branding */}
+        <div className="relative z-10 flex items-center gap-1">
+          <div className="w-3.5 h-3.5 bg-indigo-500 rounded flex items-center justify-center shrink-0">
+            <Zap size={7} fill="white" className="text-white" />
           </div>
-          <NfcWaves className="w-5 h-5 text-indigo-400" />
+          <span className="text-white font-bold text-[8px] tracking-wide">TapCard</span>
+          <NfcWaves className="w-3 h-3 text-indigo-400 ml-1" />
         </div>
-        <div className="relative z-10 flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-[7px] font-bold">AB</div>
-          <div className="text-white text-[8px] font-semibold">Ahmed Benali</div>
+
+        {/* QR code */}
+        <div className="relative z-10">
+          <svg viewBox="0 0 15 15" className="w-14 h-14" shapeRendering="crispEdges">
+            {modules.map(([x, y], i) => (
+              <rect key={i} x={x} y={y} width="1" height="1" fill="white" />
+            ))}
+          </svg>
+        </div>
+
+        {/* Bottom: scan prompt */}
+        <div className="relative z-10 text-white/50 text-[6.5px] font-semibold tracking-widest uppercase">
+          Scannez-moi
         </div>
       </div>
-      <div className="w-12 h-1.5 bg-slate-600 rounded-full" />
-      <div className="w-8 h-1 bg-slate-700 rounded-full" />
+
+      {/* Stand */}
+      <div className="w-10 h-1.5 bg-gray-700 rounded-full" />
+      <div className="w-7 h-1 bg-gray-800 rounded-full" />
     </div>
   );
 }
@@ -92,39 +121,56 @@ function MiniKeychain() {
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gray-950 pt-16 pb-24 sm:pt-24 sm:pb-32">
+    <section
+      className="relative overflow-hidden pt-16 pb-24 sm:pt-24 sm:pb-32"
+      style={{
+        background: "linear-gradient(135deg, #ffffff 0%, #f5f3ff 60%, #ede9fe 100%)",
+      }}
+    >
 
-      {/* Background: grid + glowing blobs */}
+      {/* Layer 1 — dot matrix */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+          backgroundImage: "radial-gradient(circle, rgba(99,102,241,0.22) 1.5px, transparent 1.5px)",
+          backgroundSize: "24px 24px",
         }}
       />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 right-0 w-64 h-64 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Layer 2 — animated blobs */}
+      <div className="absolute top-[-60px] left-[15%] w-[500px] h-[500px] rounded-full pointer-events-none animate-blob"
+        style={{ background: "radial-gradient(circle, rgba(165,180,252,0.55) 0%, transparent 70%)" }} />
+      <div className="absolute bottom-[-80px] right-[10%] w-[460px] h-[460px] rounded-full pointer-events-none animate-blob-2"
+        style={{ background: "radial-gradient(circle, rgba(196,181,253,0.50) 0%, transparent 70%)" }} />
+      <div className="absolute top-[20%] right-[-60px] w-[360px] h-[360px] rounded-full pointer-events-none animate-blob-3"
+        style={{ background: "radial-gradient(circle, rgba(216,180,254,0.45) 0%, transparent 70%)" }} />
+
+      {/* Layer 3 — white vignette over left text area so dots don't clash with text */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 55% 80% at 20% 50%, rgba(255,255,255,0.85) 0%, transparent 100%)",
+        }}
+      />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-12">
 
           {/* Left: Text + CTA */}
           <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-indigo-500/20">
+            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-indigo-100">
               <Sparkles size={14} />
               Livraison partout en Algérie
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
               Votre identité.{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
                 Un seul tap.
               </span>
             </h1>
 
-            <p className="mt-6 text-lg text-gray-400 max-w-lg leading-relaxed">
+            <p className="mt-6 text-lg text-gray-500 max-w-lg leading-relaxed">
               Commandez votre carte NFC personnalisée, configurez votre profil
               et partagez tous vos liens en un seul geste.
             </p>
@@ -137,12 +183,7 @@ export default function Hero() {
                 </Button>
               </Link>
               <Link href="/p/demo">
-                {/* Override outline variant for dark bg: transparent bg + white border/text */}
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto !bg-transparent !text-white !border-white/25 hover:!bg-white/10 hover:!border-white/40"
-                >
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   Voir un exemple
                 </Button>
               </Link>
@@ -156,8 +197,8 @@ export default function Hero() {
                 { value: "58", label: "Wilayas couvertes" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-gray-500 mt-0.5">{stat.label}</div>
+                  <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                  <div className="text-sm text-gray-400 mt-0.5">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -168,7 +209,7 @@ export default function Hero() {
 
             {/* Glow behind phone */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-72 h-72 bg-indigo-600/25 rounded-full blur-3xl" />
+              <div className="w-72 h-72 bg-indigo-200/60 rounded-full blur-3xl" />
             </div>
 
             {/* Phone mockup */}
@@ -178,7 +219,10 @@ export default function Hero() {
                   <div className="h-24 bg-gradient-to-br from-indigo-500 to-violet-600" />
                   <div className="px-5 pb-5">
                     <div className="flex justify-center -mt-8 mb-3">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 border-4 border-white flex items-center justify-center text-white font-bold text-xl">AB</div>
+                      <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/imgs/img pic.png" alt="Ahmed Benali" className="w-full h-full object-cover" />
+                      </div>
                     </div>
                     <div className="text-center mb-4">
                       <h3 className="font-bold text-gray-900 text-sm">Ahmed Benali</h3>
@@ -206,7 +250,7 @@ export default function Hero() {
 
             {/* 12 o'clock — status chip */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 animate-float-delay2 z-20">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-xs font-semibold px-3 py-2 rounded-2xl shadow-lg whitespace-nowrap">
+              <div className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 text-xs font-semibold px-3 py-2 rounded-2xl shadow-md whitespace-nowrap">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
                 500+ profils actifs
               </div>
@@ -261,7 +305,7 @@ export default function Hero() {
 
             {/* 6 o'clock — TapCard.dz */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 animate-float-delay2 z-20">
-              <div className="flex items-center gap-1.5 bg-indigo-600/90 backdrop-blur border border-indigo-500/50 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-indigo-500/30 whitespace-nowrap">
+              <div className="flex items-center gap-1.5 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-indigo-300 whitespace-nowrap">
                 <Zap size={11} fill="white" />
                 TapCard.dz
               </div>
